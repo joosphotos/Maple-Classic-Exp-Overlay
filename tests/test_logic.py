@@ -11,6 +11,7 @@ import tempfile
 from pathlib import Path
 
 os.environ["MAPLE_EXP_DATA"] = tempfile.mkdtemp()           # never touch your real data
+os.environ.setdefault("MAPLE_EXP_PLATFORM", "headless")     # lets the tests run on Linux (ignored on Windows and macOS)
 sys.path.insert(0, str(Path(__file__).resolve().parent.parent))
 import maple_exp as m  # noqa: E402
 assert Path(os.environ["MAPLE_EXP_DATA"]) == m.DATA_DIR, "tests must run on their own temp data folder, never on real data"
@@ -252,13 +253,40 @@ for name, bad in (("a string", "x"), ("a 2 MB string", "a" * 2_000_000), ("a lis
         cfg = m.load_config()
         check(f"{key} damaged as {name} is dropped, ui_scale kept", key not in cfg and cfg["ui_scale"] == 150)
 check(f"the right OS backend is made for {sys.platform} ({type(m.PLATFORM).__name__})",
-      type(m.PLATFORM).__name__ == {"win32": "WindowsPlatform", "darwin": "MacPlatform"}.get(sys.platform))
+      type(m.PLATFORM).__name__ == {"win32": "WindowsPlatform", "darwin": "MacPlatform",
+                                    "linux": "HeadlessPlatform"}.get(sys.platform))
 try:
     m.create_platform("plan9")
     unsupported = False
 except RuntimeError:
     unsupported = True
 check("an OS the overlay doesn't run on is turned down clearly", unsupported)
+# PL-01: the test-only headless platform is for Linux, and only when asked for by name
+saved = os.environ.pop("MAPLE_EXP_PLATFORM", None)
+try:
+    try:
+        m.create_platform("linux")
+        linux_plain = False
+    except RuntimeError:
+        linux_plain = True
+    os.environ["MAPLE_EXP_PLATFORM"] = "headless"
+    linux_headless = type(m.create_platform("linux")).__name__ == "HeadlessPlatform"
+    try:
+        m.create_platform("plan9")
+        other_os = False
+    except RuntimeError:
+        other_os = True
+finally:
+    if saved is not None:
+        os.environ["MAPLE_EXP_PLATFORM"] = saved
+check("Linux is still turned down unless MAPLE_EXP_PLATFORM=headless is set", linux_plain)
+check("MAPLE_EXP_PLATFORM=headless gives Linux the test-only platform, and no other OS", linux_headless and other_os)
+headless = m.create_platform("linux") if saved == "headless" else None
+if headless:
+    check("the headless platform sees no game, no hotkeys and no other windows",
+          headless.find_game_window() is None and headless.client_rect(1) is None
+          and not headless.create_hotkeys(lambda a: None).supported and headless.missing_permission() is None)
+    check("the headless platform keeps its data in MAPLE_EXP_DATA", headless.data_root() == Path(os.environ["MAPLE_EXP_DATA"]))
 check("the game isn't found when it isn't running (no crash looking)",
       m.PLATFORM.find_game_window() is None or m.PLATFORM.client_rect(m.PLATFORM.find_game_window()) is not None)
 if sys.platform == "win32":

@@ -11,6 +11,7 @@ import tempfile
 from pathlib import Path
 
 os.environ["MAPLE_EXP_DATA"] = tempfile.mkdtemp()           # never touch your real data
+os.environ.setdefault("MAPLE_EXP_PLATFORM", "headless")     # lets the tests run on Linux (ignored on Windows and macOS)
 sys.path.insert(0, str(Path(__file__).resolve().parent.parent))
 import healthlog  # noqa: E402
 import maple_exp as m  # noqa: E402
@@ -197,6 +198,9 @@ class Answer:
 
     def read(self, n=-1):
         return self.data
+
+    def close(self):                                        # HTTPError closes its body when it is dropped (Python 3.12)
+        pass
 
 
 def answering(data=None, code=200):
@@ -515,6 +519,9 @@ try:
 
         def read(self, n=-1):
             return self.data[:n] if n and n > 0 else self.data
+
+        def close(self):                                    # HTTPError closes its body when it is dropped (Python 3.12)
+            pass
 
     def http_error(code, data=b""):
         def urlopen(request, timeout=0):
