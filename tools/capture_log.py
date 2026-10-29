@@ -6,7 +6,7 @@ come in a busy party can be measured. One picture of the whole game window is sa
 see where the log sits.
 
 Usage (from the repo root, with the game open and the overlay's window moved off the bottom right):
-    python tools/capture_log.py [--seconds 30] [--fps 10] [--part right-half | bottom-right | full]
+    python tools/capture_log.py [--seconds 30] [--fps 10] [--part log | bottom-right | right-half | full]
   It waits 3 seconds, then records. Ctrl+C stops early (what was taken is kept).
   The pictures go to captures/log-<date>-<time>/ (captures/ is not committed): frame_00000.png, ...,
   game_start.png, game_end.png, and frames.json (each frame's time and where the game window was).
@@ -30,6 +30,7 @@ from capture import grab                               # noqa: E402
 from platforms import create_platform                  # noqa: E402
 
 PARTS = {                       # which part of the game window to record: (left, top, right, bottom) as shares of it
+    "log": (0.75, 0.55, 1.0, 0.92),         # just the pickup log, at Default and Ideal UI (small: fast enough for --fps 30)
     "bottom-right": (0.55, 0.45, 1.0, 1.0),
     "right-half": (0.5, 0.0, 1.0, 1.0),
     "full": (0.0, 0.0, 1.0, 1.0),
