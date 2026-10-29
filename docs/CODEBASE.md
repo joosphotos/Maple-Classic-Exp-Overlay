@@ -153,10 +153,13 @@ Planned in `docs/pickup-log/` (PLAN.md, TICKETS.md, tickets/, CATALOGUE.md). So 
 parts share, and the measured facts), `tools/capture_log.py` (records the game's bottom right as lossless PNGs;
 `--watch` keeps only looks where a new line came in), `tools/pickup_probe.py` (rough measurements of a recording),
 `tools/pickup_label.py` (PL-02: proposes arrivals, cuts contact sheets to read by eye, builds a truth file from a typed
-transcription, and checks a truth file against the frames), and `tests/run_pickup_tests.py` (runs every
-`tests/test_pickup_*.py`; on CI). `docs/pickup-log/CATALOGUE.md` lists every kind of line seen (wording, colours, the
-6-line limit, what is drawn over the log). Recordings, truth files (`truth/`) and contact sheets are in the private repo
-`joosphotos/maple-captures`; tests that need them read `MAPLE_CAPTURES` and skip without it.
+transcription, and checks a truth file against the frames), `pickup_items.py` (PL-03, pure: `ItemList` / `snap(text,
+tab)` puts an item name as read right against `assets/items.txt`, only OCR-style slips and only when one name fits;
+`assets/items.txt` is made by `tools/make_items.py` from a saved copy of meowdb's `item-db/all` page, 5,151 name+tab
+lines), and `tests/run_pickup_tests.py` (runs every `tests/test_pickup_*.py`; on CI). `docs/pickup-log/CATALOGUE.md`
+lists every kind of line seen (wording, colours, the 6-line limit, what is drawn over the log). Recordings, truth files
+(`truth/`) and contact sheets are in the private repo `joosphotos/maple-captures`; tests that need them read
+`MAPLE_CAPTURES` and skip without it.
 
 ## Style
 
