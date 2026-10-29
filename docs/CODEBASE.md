@@ -24,7 +24,7 @@ cost), and keeps a log per map. Players can share finished 15-minute runs with a
 | `maple_exp.py` (~6,800 lines) | Almost everything: config, update check and posting, the EXP and mesos readers, `ScreenReader`, `ExpTracker`, `MesoTracker`, `Session`, `AutoLog`, `App` (Tk UI, settings, bug reports), `main()` |
 | `capture.py` | `grab()` (mss, clipped to the monitors) and the `Capture` / `ScreenCapture` classes |
 | `ocr.py` | `Tesseract`: one subprocess run for many images (`--psm 7`); after a timeout it is left alone for 60 s |
-| `platforms/` | `base.Platform` interface, plus `windows.py` (ctypes user32: window finding, DPI, `RegisterHotKey`, mutex) and `macos.py`. Raises on Linux. |
+| `platforms/` | `base.Platform` interface, plus `windows.py` (ctypes user32: window finding, DPI, `RegisterHotKey`, mutex) and `macos.py`. Raises on Linux, except `headless.py`: a test-only stand-in (no game window, no hotkeys, DPI 96, data in `MAPLE_EXP_DATA`) that `create_platform()` gives Linux only when `MAPLE_EXP_PLATFORM=headless` is set. The tests set it; the app never does. |
 | `ui_main.py`, `ui_gfx.py`, `ui_kit.py` | The custom smooth widgets (drawn 3x, then shrunk), `MainView`, the compact shapes (`square`/`wide`/`bar`), the colours |
 | `ui_layout.py` | The game's 1024x768 design area. UI Size "Default" scales by window height/768 (min 1x); "Ideal" scales 1x below 1440 px tall, 2x from 1440 |
 | `exp_font.py`, `digits_v2.py`, `glyphs.py`, `mesos_v2.py`, `party_v2.py` | Reader v2: redraws the game's bitmap font (`assets/exp_font.json`, `assets/fonts_v2/*.json`) at screen scale and compares pixel by pixel |
@@ -143,16 +143,23 @@ the screen and ticks the session, log, sharing and health.
 - **CI:** `.github/workflows/tests.yml` runs everything on Windows (exact hashed packages from
   `requirements-build.txt`) and on macOS. `build.yml` builds on `v*` tags (the tag must match `VERSION`),
   attests the zip and drafts the release.
-- **Linux:** `import maple_exp` fails here, because `create_platform()` raises on Linux. Tests weren't tried
-  in the cloud container.
+- **Linux:** `import maple_exp` fails without `MAPLE_EXP_PLATFORM=headless`, because `create_platform()` raises on
+  Linux. The test scripts set it, so they run in the cloud container (commands in `CLAUDE.md`; `test_ui.py` needs
+  `xvfb-run`). The site (Node) tests were not tried there.
 
 ## Pickup log reader (in progress)
 
-Planned in `docs/pickup-log/` (PLAN.md, TICKETS.md, tickets/). So far: `pickup_types.py` (the shapes the parts
-share, and the measured facts), `tools/capture_log.py` (records the game's bottom right as lossless PNGs; `--watch`
-keeps only looks where a new line came in), `tools/pickup_probe.py` (rough measurements of a recording), and
-`tests/run_pickup_tests.py` (runs every `tests/test_pickup_*.py`; on CI). Recordings and truth are in the private
-repo `joosphotos/maple-captures`.
+Planned in `docs/pickup-log/` (PLAN.md, TICKETS.md, tickets/, CATALOGUE.md). So far: `pickup_types.py` (the shapes the
+parts share, and the measured facts), `tools/capture_log.py` (records the game's bottom right as lossless PNGs;
+`--watch` keeps only looks where a new line came in), `tools/pickup_probe.py` (rough measurements of a recording),
+`tools/pickup_label.py` (PL-02: proposes arrivals, cuts contact sheets to read by eye, builds a truth file from a typed
+transcription, and checks a truth file against the frames), `pickup_items.py` (PL-03, pure: `ItemList` / `snap(text,
+tab)` puts an item name as read right against `assets/items.txt`, only OCR-style slips and only when one name fits;
+`assets/items.txt` is made by `tools/make_items.py` from a saved copy of meowdb's `item-db/all` page, 5,151 name+tab
+lines), and `tests/run_pickup_tests.py` (runs every `tests/test_pickup_*.py`; on CI). `docs/pickup-log/CATALOGUE.md`
+lists every kind of line seen (wording, colours, the 6-line limit, what is drawn over the log). Recordings, truth files
+(`truth/`) and contact sheets are in the private repo `joosphotos/maple-captures`; tests that need them read
+`MAPLE_CAPTURES` and skip without it.
 
 ## Style
 

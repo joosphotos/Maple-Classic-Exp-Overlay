@@ -32,7 +32,7 @@ Mac, 1920 x 1080 game, 6-person party, Kerning City Subway, 30 s each at 10 look
 | Colours | White and yellow (meaning not known yet) | The font asset needs several fills |
 | Grid | Lines sit on a fixed grid (14 px at 1x) and jump up by one line when one arrives; no sliding | Compare whole lines between looks |
 | Fade | Starts the moment a line shows, steady: strength about 250, about -120 a second; readable about 1.0 s (90% within 1.4 s) | **A line's strength tells its age**: tells identical lines apart; read new lines at full strength |
-| Lines at once | Up to 7 seen (the game's real limit unknown) | Learn the limit while running |
+| Lines at once | **6 at most** (PL-02: with 10 lines arriving in 1.4 s still 6 are drawn; the probe's "7" was scenery) | A 7th arrival drops the oldest at once, even while it fades: a burst of 7+ between two looks loses lines (a gap) |
 | Rate | 2.7 new lines a second; busiest second 7; busiest look 3 (a kill gives 2 lines at once: EXP + party bonus) | Bursts decide how often to look |
 | Speed-up test | Same data played 2x / 3x faster at 10 looks a second: busiest look 4 / 5 lines | 10 looks a second holds 3x with little room: look 20 a second when busy |
 | Quiet looks | 74% of looks had nothing new | Most looks cost almost nothing |
@@ -98,11 +98,11 @@ check 0.3 ms, about 2 ms per new line read. About 3-6% of one core at the busies
 
 | Unknown | Found out by |
 |---|---|
-| The game's real line limit, and what a big multi-kill burst does | Windows 30 fps recording, watch sessions (RECORDING.md); live: most lines at once (PL-10) |
-| What white and yellow lines mean (own kill vs party's?) | Solo vs party recording (RECORDING.md), PL-02 |
+| What a big multi-kill burst does (the limit is 6 lines, PL-02) | Windows 30 fps recording, watch sessions (RECORDING.md); live: most lines at once (PL-10) |
+| What white and yellow EXP lines mean (own kill vs party's?). PL-02: not the amount, not the party; party bonus is always yellow, mesos and items always white | Solo vs party recording (RECORDING.md) |
 | Other kinds of line: quests, a full inventory, fame, event items, mesos spent, numbers with commas, long item names (wrapped? cut?) | Watch sessions, PL-02 catalogue |
 | Where the log sits on Windows (no title bar), at Ideal 2x, small windows, the controller bar | Windows recordings, PL-06 |
-| Whether sprites and damage numbers are drawn over the log | Recordings, PL-02 |
+| Whether sprites and damage numbers are drawn over the log. PL-02: no, they are under the text; name tags are over it | Windows recordings (PL-02b) |
 | A game setting that hides pickup lines? | You, in game |
 | Capture speed on Windows | Windows 30 fps recording |
 
