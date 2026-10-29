@@ -151,7 +151,7 @@ the screen and ticks the session, log, sharing and health.
 Planned in `docs/pickup-log/` (PLAN.md, TICKETS.md, tickets/). So far: `pickup_types.py` (the shapes the parts
 share, and the measured facts), `tools/capture_log.py` (records the game's bottom right as lossless PNGs; `--watch`
 keeps only looks where a new line came in), `tools/pickup_probe.py` (rough measurements of a recording), and
-`tests/run_pickup_tests.py` (runs every `tests/test_pickup_*.py`; on CI). Recordings and truth are in the private
+`tests/run_pickup_tests.py` (runs every `tests/test_pickup_*.py`; on CI), `pickup_items.py` (pure: `ItemList`/`snap(text, tab)` puts an item name as read right against `assets/items.txt`, only OCR-style slips and only when one name fits; `assets/items.txt` is made by `tools/make_items.py` from a saved copy of meowdb's `item-db/all` page, 5,151 name+tab lines). Recordings and truth are in the private
 repo `joosphotos/maple-captures`.
 
 ## Style
