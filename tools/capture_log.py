@@ -7,9 +7,13 @@ see where the log sits.
 
 Usage (from the repo root, with the game open and the overlay's window moved off the bottom right):
     python tools/capture_log.py [--seconds 30] [--fps 10] [--part log | bottom-right | right-half | full]
+                                [--name win-default] [--watch]
   It waits 3 seconds, then records. Ctrl+C stops early (what was taken is kept).
-  The pictures go to captures/log-<date>-<time>/ (captures/ is not committed): frame_00000.png, ...,
+  The pictures go to captures/log-<date>-<time>[-<name>]/ (captures/ is not committed): frame_00000.png, ...,
   game_start.png, game_end.png, and frames.json (each frame's time and where the game window was).
+  --watch: for long play (say --seconds 3600) to catch rare lines (quests, a full inventory, fame, event items...):
+  looks as often as --fps but keeps a picture only when new text came into the log (--part log unless given),
+  plus a picture of the whole game window every 10 minutes. frames.json lists only the pictures kept.
 On macOS, Terminal (or Python) needs System Settings > Privacy & Security > Screen Recording; restart it after.
 The pictures can show chat and names: look through them before sharing them.
 """
@@ -23,6 +27,7 @@ from pathlib import Path
 
 import cv2
 import mss
+import numpy as np
 
 ROOT = Path(__file__).resolve().parents[1]
 sys.path.insert(0, str(ROOT))
@@ -35,6 +40,10 @@ PARTS = {                       # which part of the game window to record: (left
     "right-half": (0.5, 0.0, 1.0, 1.0),
     "full": (0.0, 0.0, 1.0, 1.0),
 }
+WATCH_NEW_INK = 150             # --watch keeps a picture when at least this many fresh text pixels are new since the last look
+WATCH_BRIGHT, WATCH_EDGE = 220, 150     # ...a fresh text pixel: this bright, and this much brighter than its shadow
+                                        # (tuned on the Mac recordings: no new line missed, about 1 in 5 looks kept)
+WATCH_WHOLE = 600               # --watch also keeps the whole game window every this many seconds
 PNG_LEVEL = 1                   # fast PNG compression (still lossless), so saving keeps up with the pictures
 BACKLOG = 200                   # pictures waiting to be saved before new ones are dropped (and counted as dropped)
 
@@ -43,17 +52,21 @@ def main():
     ap = argparse.ArgumentParser(description=__doc__.split("\n")[0])
     ap.add_argument("--seconds", type=float, default=30)
     ap.add_argument("--fps", type=float, default=10)
-    ap.add_argument("--part", choices=sorted(PARTS), default="bottom-right")
+    ap.add_argument("--part", choices=sorted(PARTS))
+    ap.add_argument("--name", default="", help="added to the folder's name, like win-default or mac-ideal")
+    ap.add_argument("--watch", action="store_true")
     args = ap.parse_args()
+    args.part = args.part or ("log" if args.watch else "bottom-right")
 
     plat = create_platform()
+    plat.setup_process()                                # (Windows: physical pixels, as the overlay uses)
     plat.ask_permissions()
     if why := plat.missing_permission():
         sys.exit(why)
     hwnd = plat.find_game_window()
     if hwnd is None:
         sys.exit("Couldn't find the MapleStory window. Is the game open (and not minimized)?")
-    out = ROOT / "captures" / time.strftime("log-%Y%m%d-%H%M%S")
+    out = ROOT / "captures" / (time.strftime("log-%Y%m%d-%H%M%S") + (f"-{args.name}" if args.name else ""))
     out.mkdir(parents=True)
 
     todo = queue.Queue(BACKLOG)
@@ -64,7 +77,18 @@ def main():
 
     worker = threading.Thread(target=saver, daemon=True)
     worker.start()
-    frames, dropped, missed = [], 0, 0
+    frames, dropped, missed, looks, last_ink, last_whole = [], 0, 0, 0, None, 0.0
+    def new_text(img):
+        """Did a new line come into the log since the last look? A new line is at full strength: bright pixels over
+        their own dark shadow (one down and right). Fading lines only lose such pixels, so only new ones count."""
+        nonlocal last_ink
+        g = img.max(axis=2).astype(np.int16)
+        ink = np.zeros(g.shape, bool)
+        ink[:-1, :-1] = (g[:-1, :-1] > WATCH_BRIGHT) & (g[:-1, :-1] - g[1:, 1:] > WATCH_EDGE)
+        fresh = last_ink is None or (ink & ~last_ink).sum() >= WATCH_NEW_INK
+        last_ink = ink
+        return fresh
+
     with mss.mss() as sct:
         def whole(name):
             rect = plat.client_rect(hwnd)
@@ -76,7 +100,8 @@ def main():
         time.sleep(3)
         whole("game_start.png")
         step, start = 1 / args.fps, time.perf_counter()
-        print(f"Recording for {args.seconds:g} s at {args.fps:g} a second. Ctrl+C stops early.")
+        print(f"Recording for {args.seconds:g} s at {args.fps:g} a second{' (watch: only new log text is kept)' if args.watch else ''}."
+              " Ctrl+C stops early.")
         try:
             while (now := time.perf_counter()) - start < args.seconds:
                 rect = plat.client_rect(hwnd)
@@ -89,8 +114,10 @@ def main():
                     shot = grab(sct, *box)
                     if shot is None:
                         missed += 1
+                    elif args.watch and not new_text(shot[0]):
+                        pass
                     else:
-                        name = f"frame_{len(frames):05d}.png"
+                        name = f"frame_{looks:05d}.png"
                         try:
                             todo.put_nowait((name, shot[0]))
                             frames.append({"file": name, "t": round(now - start, 3), "game": list(rect),
@@ -98,7 +125,11 @@ def main():
                         except queue.Full:
                             dropped += 1
                     print(f"\r  {len(frames)} pictures", end="", flush=True)
-                time.sleep(max(0.0, start + (len(frames) + dropped + missed + 1) * step - time.perf_counter()))
+                if args.watch and now - last_whole >= WATCH_WHOLE:
+                    last_whole = now
+                    whole(f"game_{looks:05d}.png")
+                looks += 1
+                time.sleep(max(0.0, start + looks * step - time.perf_counter()))
         except KeyboardInterrupt:
             pass
         whole("game_end.png")
@@ -106,7 +137,7 @@ def main():
     todo.put(None)
     worker.join()
     (out / "frames.json").write_text(json.dumps({
-        "fps": args.fps, "part": args.part, "dropped": dropped, "missed": missed, "frames": frames},
+        "fps": args.fps, "part": args.part, "watch": args.watch, "looks": looks, "dropped": dropped, "missed": missed, "frames": frames},
         indent=1), encoding="utf-8")
     print(f"Saved {len(frames)} pictures to {out}" + (f" ({dropped} dropped: saving fell behind)" if dropped else ""))
 

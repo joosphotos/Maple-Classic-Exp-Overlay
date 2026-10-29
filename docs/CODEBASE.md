@@ -146,6 +146,14 @@ the screen and ticks the session, log, sharing and health.
 - **Linux:** `import maple_exp` fails here, because `create_platform()` raises on Linux. Tests weren't tried
   in the cloud container.
 
+## Pickup log reader (in progress)
+
+Planned in `docs/pickup-log/` (PLAN.md, TICKETS.md, tickets/). So far: `pickup_types.py` (the shapes the parts
+share, and the measured facts), `tools/capture_log.py` (records the game's bottom right as lossless PNGs; `--watch`
+keeps only looks where a new line came in), `tools/pickup_probe.py` (rough measurements of a recording), and
+`tests/run_pickup_tests.py` (runs every `tests/test_pickup_*.py`; on CI). Recordings and truth are in the private
+repo `joosphotos/maple-captures`.
+
 ## Style
 
 Comments and names are plain English, written for players, often with an aside in parentheses. Constants are in
