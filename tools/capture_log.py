@@ -10,6 +10,7 @@ Usage (from the repo root, with the game open and the overlay's window moved off
   It waits 3 seconds, then records. Ctrl+C stops early (what was taken is kept).
   The pictures go to captures/log-<date>-<time>/ (captures/ is not committed): frame_00000.png, ...,
   game_start.png, game_end.png, and frames.json (each frame's time and where the game window was).
+On macOS, Terminal (or Python) needs System Settings > Privacy & Security > Screen Recording; restart it after.
 The pictures can show chat and names: look through them before sharing them.
 """
 import argparse
@@ -45,6 +46,9 @@ def main():
     args = ap.parse_args()
 
     plat = create_platform()
+    plat.ask_permissions()
+    if why := plat.missing_permission():
+        sys.exit(why)
     hwnd = plat.find_game_window()
     if hwnd is None:
         sys.exit("Couldn't find the MapleStory window. Is the game open (and not minimized)?")
