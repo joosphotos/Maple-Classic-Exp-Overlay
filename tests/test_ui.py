@@ -11,6 +11,7 @@ from pathlib import Path
 
 DATA = Path(tempfile.mkdtemp())
 os.environ["MAPLE_EXP_DATA"] = str(DATA)                    # never touch your real data
+os.environ.setdefault("MAPLE_EXP_PLATFORM", "headless")     # lets the tests run on Linux (ignored on Windows and macOS)
 sys.path.insert(0, str(Path(__file__).resolve().parent.parent))
 import maple_exp as m  # noqa: E402
 assert Path(os.environ["MAPLE_EXP_DATA"]) == m.DATA_DIR, "tests must run on their own temp data folder, never on real data"
