@@ -12,18 +12,18 @@ from collections import namedtuple
 
 # ---- measured on the Mac recordings of 2026-10-29 (tools/pickup_probe.py); tickets refine these in their Results
 PITCH = 14                  # line pitch on the 1024 x 768 design area (UI scale 1): 14 px at Ideal 1x, ~19.7 at Default 1080
-MAX_LINES_SEEN = 7          # most lines on screen at once so far (the game's own limit is not known yet)
+MAX_LINES = 6               # the game draws 6 lines at most: a 7th arrival drops the oldest at once, even while it fades (PL-02)
 FADE_START = 250            # a new line's strength (fill minus shadow, brightest channel) on a dark scene...
-FADE_PER_SECOND = 120       # ...falls about this much a second, from the moment it shows (no hold): about 2 s to nothing
+FADE_PER_SECOND = 120       # ...falls 120 to 170 a second (12 to 17 a look, it varies), from the moment it shows (no hold): about 2 s to nothing
 READABLE_SECONDS = 1.0      # a line is readable (strength above about 60) for about this long; 90% within 1.4 s
-BUSIEST_LOOK = 3            # most new lines between two looks 0.1 s apart (6-person party, Kerning Subway, 30 s)
-RATE_MEASURED = 2.7         # new lines a second, average, in that recording; the reader is built for 3x this
+BUSIEST_LOOK = 4            # most new lines between two looks 0.1 s apart (6-person party, Kerning Subway, 30 s each: 3 in Ideal, 4 in Default)
+RATE_MEASURED = 3.0         # new lines a second, average, from the hand-made truth (the probe said 2.7); the reader is built for 3x this
 
 KINDS = ("exp", "party", "mesos", "item", "other")
 # exp:   "You received EXP (+22)"            amount 22
 # party: "Bonus EXP for PARTY (+7)"          amount 7
 # mesos: "You have gained mesos (+10)"       amount 10
-# item:  "Stirge Wing x1 earned. (Etc)"      item "Stirge Wing", qty 1, tab "Etc"
+# item:  "Stirge Wing x1 earned. (Etc)"      item "Stirge Wing", qty 1, tab "Etc" (a long name is cut: "Halloween Can... x1 earned. (Etc)")
 # other: a line the reader read but that fits none of these (kept so the stack still lines up); text says what
 
 Anchor = namedtuple("Anchor", "right bottom pitch scale")
