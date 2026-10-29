@@ -7,7 +7,7 @@ This is the user's fork of beanguri's Maple Classic Exp Overlay (remotes: `origi
 how often each part is read, the trackers, the log and runs, the server, which rules are kept in sync by hand,
 and the tests. It replaces re-reading the 6,800-line `maple_exp.py`.
 
-**Pickup log reader (in progress):** `docs/pickup-log/PLAN.md` (design, measured facts), `TICKETS.md` (order,
+**Pickup log reader (in progress): start with `docs/pickup-log/STATUS.md`** (where things stand, what's next), then `docs/pickup-log/PLAN.md` (design, measured facts), `TICKETS.md` (order,
 what blocks what, how a ticket session works) and `tickets/PL-*.md`. Recordings and their truth are in the private
 repo `joosphotos/maple-captures`: never commit pictures to this public repo.
 

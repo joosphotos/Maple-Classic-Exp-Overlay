@@ -1,6 +1,6 @@
 # Pickup log reader: tickets
 
-The plan is `PLAN.md`. Each ticket below is one session (Sonnet), one branch, one pull request into the fork's
+**Where things stand: `STATUS.md`.** The plan is `PLAN.md`. Each ticket below is one session (Sonnet), one branch, one pull request into the fork's
 `main`. A ticket file says everything its session needs; the shared shapes are in `pickup_types.py`.
 
 ## Order and what blocks what
@@ -17,24 +17,24 @@ PL-03 Item list ──────────┴──> PL-07 Read ────
                                                                      PL-11 Health report + release ──> YOU-2 Trial
 ```
 
-| Wave | Ticket | Title | Blocked by | Size |
-|---|---|---|---|---|
-| 1 | YOU-1 | Windows recordings (`RECORDING.md`) | nothing | you, ~1.5 h |
-| 1 | PL-01 | Cloud test bench: the overlay's tests on Linux | nothing | S |
-| 1 | PL-02 | Truth and message catalogue (Mac recordings) | nothing | M |
-| 1 | PL-03 | The game's item list and name matching | nothing | S |
-| 2 | PL-04 | The pickup log font | PL-02 | M-L |
-| 3 | PL-02b | Truth and catalogue for the Windows recordings | PL-02, YOU-1 | M |
-| 3 | PL-05 | Synthetic pickup logs | PL-04 | M |
-| 3 | PL-07 | Reading a line | PL-04, PL-03 | L |
-| 4 | PL-06 | Finding the log | PL-04, PL-02b | M |
-| 4 | PL-08 | Following the stack | PL-05 (and PL-02) | L, the hardest |
-| 5 | PL-09 | End-to-end check and the 100% gate | PL-06, PL-07, PL-08 | M |
-| 6 | PL-10 | Live, in shadow mode | PL-09, PL-01 | L |
-| 7 | PL-11 | Health report, bug report, release | PL-10 | M |
-| 8 | YOU-2 | Field trial, then decide what goes live | PL-11 released | you |
+| Wave | Ticket | Title | Blocked by | Size | Status |
+|---|---|---|---|---|---|
+| 1 | YOU-1 | Windows recordings (`RECORDING.md`) | nothing | you, ~1.5 h | **to do (at home)** |
+| 1 | PL-01 | Cloud test bench: the overlay's tests on Linux | nothing | S | done |
+| 1 | PL-02 | Truth and message catalogue (Mac recordings) | nothing | M | done |
+| 1 | PL-03 | The game's item list and name matching | nothing | S | done |
+| 2 | PL-04 | The pickup log font | PL-02 | M-L | **next: can start now** |
+| 3 | PL-02b | Truth and catalogue for the Windows recordings | PL-02, YOU-1 | M | after YOU-1 |
+| 3 | PL-05 | Synthetic pickup logs | PL-04 | M |  |
+| 3 | PL-07 | Reading a line | PL-04, PL-03 | L |  |
+| 4 | PL-06 | Finding the log | PL-04, PL-02b | M |  |
+| 4 | PL-08 | Following the stack | PL-05 (and PL-02) | L, the hardest |  |
+| 5 | PL-09 | End-to-end check and the 100% gate | PL-06, PL-07, PL-08 | M |  |
+| 6 | PL-10 | Live, in shadow mode | PL-09, PL-01 | L |  |
+| 7 | PL-11 | Health report, bug report, release | PL-10 | M |  |
+| 8 | YOU-2 | Field trial, then decide what goes live | PL-11 released | you |  |
 
-- **Critical path:** PL-02 → PL-04 → PL-05 → PL-08 → PL-09 → PL-10 → PL-11. Start PL-02 first.
+- **Critical path:** PL-02 → PL-04 → PL-05 → PL-08 → PL-09 → PL-10 → PL-11. PL-02 is done: start PL-04 now.
 - **In parallel:** wave 1 all at once; PL-05 and PL-07 together; PL-06 whenever the Windows truth is in.
 - PL-08 can start with PL-02's hand-checked anchors and swap in PL-06's finder when it lands; it only needs
   PL-05's synthetic logs for its stress tests.

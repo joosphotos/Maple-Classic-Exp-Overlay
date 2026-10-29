@@ -5,16 +5,14 @@ do (no 1440p screen, no controller), skip and note it.
 
 ## Once: get the code
 
-Merge today's work into your fork's `main` first, so new sessions (which start from `main`) have it:
+Everything is on the fork's `main` already:
 
 ```bash
 git clone https://github.com/joosphotos/Maple-Classic-Exp-Overlay.git
 cd Maple-Classic-Exp-Overlay
-git merge origin/claude/determined-newton-gr0zkm
-git push origin main
 ```
 
-(If `main` was cloned before, `git pull` first.) Then a Python for the recorder:
+(If you cloned it before, `git pull` instead.) Then a Python for the recorder:
 
 ```bash
 py -3 -m venv .venv
@@ -55,6 +53,8 @@ came in (about 1 in 4 looks while fighting) plus the whole window every 10 minut
 - Die once (EXP loss line?).
 - Level up.
 - Anything that adds a bonus line (event EXP, a ring, a buff).
+- Pick up a Set-up item and a Cash item: does the line say `(Set-up)` or `(Setup)`, and `(Cash)`? (PL-03 assumed
+  `Set-up` and `Cash`.) Do item names ever carry a note like `(Lv 10)`? Write the answers in NOTES.md.
 
 And check in Settings: is there an option that hides pickup messages? (Note what it's called.)
 

@@ -1,10 +1,10 @@
 # Prompts for the ticket sessions
 
-Start each as a new session on `joosphotos/Maple-Classic-Exp-Overlay`, branch `main` (merge
-`claude/determined-newton-gr0zkm` into `main` first: RECORDING.md, "Once: get the code"). Paste the prompt as is.
+Start each as a new session on `joosphotos/Maple-Classic-Exp-Overlay`, branch `main`. Paste the prompt as is.
+Where things stand: `STATUS.md`. **Wave 1 (PL-01, PL-02, PL-03) is done and merged.**
 Sessions in the same wave can run at the same time. Merge a wave's pull requests before starting the next.
 
-## Wave 1 (all at once)
+## Wave 1 (all at once): done
 
 ### PL-01 Cloud test bench
 ```
