@@ -31,6 +31,8 @@ jobs:
         run: python tests/test_health.py
       - name: Reader v2 shared pieces tests
         run: python tests/test_v2.py
+      - name: Pickup log reader tests (synthetic; the recordings are private and not on CI)
+        run: python tests/run_pickup_tests.py
       - name: Map-name matching tests (the site's)
         run: node server/test_mapnames.mjs
       - name: Old-address redirect test (the site's)
@@ -71,6 +73,8 @@ jobs:
         run: python tests/test_health.py
       - name: Reader v2 shared pieces tests
         run: python tests/test_v2.py
+      - name: Pickup log reader tests (synthetic; the recordings are private and not on CI)
+        run: python tests/run_pickup_tests.py
       - name: Map-name matching tests (the site's)
         run: node server/test_mapnames.mjs
       - name: Old-address redirect test (the site's)
