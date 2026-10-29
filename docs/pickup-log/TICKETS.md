@@ -42,7 +42,7 @@ PL-03 Item list ──────────┴──> PL-07 Read ────
 
 ## How a ticket session works
 
-1. **Start a new session on the fork** (`joosphotos/Maple-Classic-Exp-Overlay`, branch `main`), with:
+1. **Start a new session on the fork** (ready prompts for every ticket: `PROMPTS.md`) (`joosphotos/Maple-Classic-Exp-Overlay`, branch `main`), with:
 
    > Read CLAUDE.md, docs/CODEBASE.md and docs/pickup-log/PLAN.md, then do ticket
    > docs/pickup-log/tickets/PL-0X.md. Follow its "Done when" exactly; ask me only for owner decisions it names.
