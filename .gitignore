@@ -31,3 +31,6 @@ node_modules/
 # One-off files made from the live data (see server/tools/)
 /server/tools/maps-live.json
 /server/tools/cleanup-maps.sql
+
+# Pictures recorded by tools/capture_log.py (can show chat and names)
+/captures/
