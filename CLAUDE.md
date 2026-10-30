@@ -11,6 +11,11 @@ and the tests. It replaces re-reading the 6,800-line `maple_exp.py`.
 what blocks what, how a ticket session works) and `tickets/PL-*.md`. Recordings and their truth are in the private
 repo `joosphotos/maple-captures`: never commit pictures to this public repo.
 
+**Now (2026-10-30):** wave 1 (PL-01, PL-02, PL-03) is done and merged into the fork's `main` (PR #5). Next: the owner
+makes the Windows recordings (`docs/pickup-log/RECORDING.md`), PL-04 (font) can start now, PL-02b after the recordings.
+Each ticket is a new session started with its prompt from `docs/pickup-log/PROMPTS.md`; the owner merges the PRs.
+Releases go upstream to `beanguri` (the owner's other account) only when the owner says so.
+
 Working notes:
 - The app runs on Windows and macOS only; `import maple_exp` raises on Linux (`platforms.create_platform`),
   except for the tests: they set `MAPLE_EXP_PLATFORM=headless` (the test-only `platforms/headless.py`).
